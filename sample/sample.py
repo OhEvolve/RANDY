@@ -32,9 +32,20 @@ class Sample(object):
     def split(self,volume):
         """ Split sample into a new population with a certain volume """
 
+    def __add__(self,other):
+        """ Add matter to sample """ 
+        # check that the added object is the Matter class
+
+        if not issubclass(type(other),Matter):
+            raise TypeError('Sample can only add Matter objects')
+
+        self.contents.append(other)
+        return self 
+
     def __iadd__(self,other):
         """ Add matter to sample """ 
         # check that the added object is the Matter class
+
         if not issubclass(type(other),Matter):
             raise TypeError('Sample can only add Matter objects')
 
@@ -83,6 +94,7 @@ class Sample(object):
 """ Main Class  """
 
 def _subtract_volume(sample,volume):
+    pass 
 
 #--------------------------------------#
 

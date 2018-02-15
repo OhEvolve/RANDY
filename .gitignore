@@ -1,5 +1,5 @@
 # Private keys
-*database/client_secret.json
+*client_secret.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

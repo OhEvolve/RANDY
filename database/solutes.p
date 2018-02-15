@@ -1,0 +1,23 @@
+(dp0
+S'Tris-Cl'
+p1
+(dp2
+S'owner'
+p3
+S''
+p4
+sS'reagent'
+p5
+S'Tris-Cl'
+p6
+sS'name'
+p7
+g1
+sS'weight'
+p8
+g4
+sS'molecular_weight'
+p9
+S'121.14 g/mol'
+p10
+ss.

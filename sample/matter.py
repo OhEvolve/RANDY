@@ -7,7 +7,7 @@
 # nonstandard libraries
 
 # homegrown libraries
-
+import sample
 
 """ Main Class  """
 
@@ -25,6 +25,10 @@ class Matter(object):
 
         self.update(*args,**kwargs) # update with arguments
 
+    def __add__(self,other):
+        result = sample.Sample(contents=[self,other])
+        return result 
+
     def __str__(self):
         """ Return string with description """
         description  = ['-- {} object --'.format(type(self).__name__)]
@@ -35,6 +39,10 @@ class Matter(object):
     def __repr__(self):
         """ Representation of object """
         return '{}({})'.format(type(self).__name__,self.name)
+
+    def __call__(self,*args,**kwargs):
+        """ Update objects with args/kwargs """
+        self.update(*args,**kwargs) 
 
     def update(self,*args,**kwargs):
         """ Update objects with args/kwargs """
