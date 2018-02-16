@@ -26,10 +26,10 @@ class Sample(Matter,Mixture):
         Matter.__init__(self)                    # update with arguments
         Mixture.__init__(self)                   # update with arguments
 
+        self.update(*args,**kwargs)     # update object attributes
+
         # list of features to print out on call
         self.features += ['container']
-
-        self.update(*args,**kwargs) # update with arguments
 
     def split(self,volume):
         """ Split sample into a new population with a certain volume """

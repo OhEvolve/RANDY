@@ -15,10 +15,11 @@ class Solution(Matter):
     def __init__(self,*args,**kwargs):
         """ Initialization of object """
 
-        self.reagent = ''                        # reagent label
         self.volume = '0 mL'                     # volume of solution
 
         Matter.__init__(self,*args,**kwargs)     # update with arguments
+
+        self.update(*args,**kwargs)              # update object attributes
 
         self.features += ['reagent','volume']    # add printed attributes
 

@@ -21,44 +21,45 @@ from database.database import Database
 #from units import sum_units
 
 
-def main():
+def main(mode = 0):
 
-    '''#
-    sequence = Sequence(name='Plasmid1',sequence="ATCTAG")
-    cell     = Cell(name='DH5a',species="E.Coli")
-    solute   = Solute(name='Tris',weight=(100,'g'))
-    solution = Solution(name='dH2O',volume=(10,"mL"))
+    if mode == 0:
+        """ CURRENT FOCUS """
+        db = Database()
+        solute   = db.load('Tris-Cl')
+        print solute 
+        solute.mass = '100 g'
+        print solute
+
+
+    if mode == 1:
+        """ SAMPLE TESTING """
+        sequence = Sequence(name='Plasmid1',sequence="ATCTAG")
+        cell     = Cell(name='DH5a',species="E.Coli")
+        solute   = Solute(name='Tris',mass =(100,'g'))
+        solution = Solution(name='dH2O',volume=(10,"mL"))
+
+        sample  = Sample(container='10mL tube')
+
+        sample += sequence
+        sample += cell 
+        sample += solute 
+        sample += solution 
+
+        print 'Cell+sequence:\n',cell+sequence
+        print 'Sample:\n',sample
     
-    buff     = Buffer(
-                    name='Buffer EB',
-                    volume=(10,"mL"),
-                    contents=[solute,solution]
-                    )
+    if mode == 2:
+        """ DATABASE TESTING """
+        db = Database()
+        db.sync_local(overwrite=True)
 
-    sample  = Sample(container='10mL tube')
+        solution = db.load('dH2O',volume = (50,'uL'))
+        solute   = db.load('Tris-Cl')
+        cells    = db.load('DH5a')
 
-    sample += sequence
-    sample += cell 
-    sample += solute 
-    sample += solution 
+        buff  = db.load('Buffer EB')
 
-    print 'Cell:\n',cell
-    print 'Sequence:\n',sequence
-    print 'Cell+sequence:\n',cell+sequence
-    print 'Buffer:\n',buff
-    #'''#
-    
-    #'''#
-    db = Database()
-    db.sync_local(overwrite=True)
-
-    solution = db.load('dH2O',volume = (50,'uL'))
-    solute   = db.load('Tris-Cl')
-    cells    = db.load('DH5a')
-
-    buff  = db.load('Buffer EB')
-
-    #'''#
 
 
     return 

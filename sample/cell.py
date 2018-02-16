@@ -18,7 +18,9 @@ class Cell(Matter):
         self.species = ''                        # species of population
         self.count = 0                           # cell count
 
-        Matter.__init__(self,*args,**kwargs)     # update with arguments
+        Matter.__init__(self)     # update with arguments
+
+        self.update(*args,**kwargs)              # update object attributes
 
         self.features += ['species','count']     # add printed attributes
 

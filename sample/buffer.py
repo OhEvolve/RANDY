@@ -27,10 +27,10 @@ class Buffer(Matter,Mixture):
         Matter.__init__(self)                    # update with arguments
         Mixture.__init__(self)                   # update with arguments
 
+        self.update(*args,**kwargs)     # update object attributes
+
         # list of features to print out on call
         self.features += ['instructions','reagents']
-
-        self.update(*args,**kwargs)              # update with arguments
 
     def __str__(self):
         """ Return string with description """

@@ -6,6 +6,7 @@
 # nonstandard libraries
 # homegrown libraries
 from matter import Matter 
+from solute import Solute 
 
 # TODO:
 # codon set support
@@ -20,10 +21,14 @@ class Sequence(Matter):
         self.sequence      = ''                        # species of population
         self.codon_set     = 'standard'                # codon set (only supported: standard)
         self.elements      = {}                        # cell count
-        self.weight        = (0.,'ng')              # cell count
+        self.weight        = '0 ug'                    # cell count
         self.material      = 'dsDNA'                   # dsDNA,ssDNA,dsRNA,ssRNA
+        self.shape         = 'linear'                  # circular
 
-        Matter.__init__(self,*args,**kwargs)     # update with arguments
+        Matter.__init__(self)           # add class features
+        Solute.__init__(self)           # add class features
+
+        self.update(*args,**kwargs)     # update object attributes
 
         self.features += ['weight','material']     # add printed attributes
 
@@ -39,6 +44,24 @@ class Sequence(Matter):
 
         # returns joined object
         return base_str + '\n' + '\n'.join(description)
+
+    @property
+    def molecular_weight(self):
+        """ Calculate molecular weight based on stuff """
+
+        return self._molecular_weight
+
+    @molecular_weight.setter
+    def molecular_weight(self,value):
+        """ Block molecular weight changes """
+
+        # if the sequence is empty, return nothing to prevent property calls
+        if len(self.sequence) == 0: 
+            return None
+
+        # else
+        
+
 
 
 """ Unit tests """
