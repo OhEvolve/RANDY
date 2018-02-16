@@ -17,6 +17,9 @@ from sample.buffer import Buffer
 # DATABASE MODULE
 from database.database import Database
 
+# UNITS
+#from units import sum_units
+
 
 def main():
 
@@ -52,9 +55,6 @@ def main():
     solution = db.load('dH2O',volume = (50,'uL'))
     solute   = db.load('Tris-Cl')
     cells    = db.load('DH5a')
-
-    Buffer(contents=[solute,cells])
-    
 
     buff  = db.load('Buffer EB')
 

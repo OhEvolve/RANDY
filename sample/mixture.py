@@ -5,18 +5,20 @@
 # standard libraries
 # nonstandard libraries
 # homegrown libraries
-from methods import unit_sum
+from units import add_units 
 
 """ Main Class  """
 
 class Mixture(object):
 
+    def __init__(self):
+        self.features += ['volume']
+
     @property
     def volume(self):
-
-        """ Trigger property """
+        """ Auto-calculate volume from contents """
         # check for contents
-        if not hasattr(self,contents):
+        if not hasattr(self,'contents'):
             raise AttributeError('Mixture object missing contents!')
 
         # access the volume of each component of mixture
@@ -24,5 +26,10 @@ class Mixture(object):
                     if hasattr(content,'volume')]
 
         # return summed components
-        return sum_units(volumes)
+        return add_units(*volumes)
+
+    @volume.setter
+    def volume(self,new_volume):
+        self.volume
+        
 

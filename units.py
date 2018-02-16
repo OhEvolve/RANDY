@@ -25,16 +25,49 @@ def load_enzyme(name):
 
 #--------------------------------------#
 
-def subtract_unit(unit,unit2):
+def add_units(*units):
+    """ Subtract two units from each other """
+    # check that units are compatible between unit/unit2
+    if len(units) == 0: 
+        return None
+    _check_unit_compatibility(*units)
 
+    # get unit dictionary
+    unit_dict = _unit_dict(units[0])
+    units = tuple(_2list(u) for u in units)
 
+    # subtract using unit conversion
+    new_unit = units[0]
+    new_unit[0] += sum([u[0]*unit_dict[u[1]]/unit_dict[new_unit[1]]
+        for u in units[1:]])
+
+    # package and return string unit
+    return _output(new_unit,unit_dict)
+
+#--------------------------------------#
+
+def subtract_units(unit1,unit2):
+    """ Subtract two units from each other """
+    # check that units are compatible between unit/unit2
+    _check_unit_compatibility(unit1,unit2)
+
+    # get unit dictionary
+    unit_dict = _unit_dict(unit1)
+    unit1,unit2 = _2list(unit1),_2list(unit2)
+
+    # subtract using unit conversion
+    unit3 = [unit1[0] - unit2[0]*unit_dict[unit2[1]]/unit_dict[unit1[1]],unit1[1]]
+
+    # package and return string unit
+    return _output(unit3,unit_dict)
+
+#--------------------------------------#
 
 def convert_units(unit,total):
 
     """ Convert volume units """
 
     units = _volume_units()
-    units = _mass_units()
 
     if unit[1] == 'X':
         unit = (total[0]/float(unit[0]),total[1])
@@ -49,52 +82,50 @@ def convert_units(unit,total):
     return unit_converts[0]
 
 #--------------------------------------#
-
-def fill_reaction(total,*args):
-
-    """ Finds how to fill reaction to total """
-
-    units = _volume_units()
-
-    reagent_units = [v[0]*units[v[1]]/units[total[1]] for k,v in args]
-
-    return (total[0] - sum(reagent_units),total[1])
-
-
-#--------------------------------------#
 # TODO: consider faster alternatives (no indexing)
 #--------------------------------------#
 
-def comp(seq):
 
-    """ Complement input sequence """
+def _2list(unit):
+    """ Convert unit str to list """
+    if not isinstance(unit,str):
+        raise TypeError('Input required as <str>!')
+    unit = unit.split(' ') 
+    return [float(unit[0]),unit[1]]
 
-    assert isinstance(seq,str),"submitted sequence is not str"
-    seq_map = _seq_map()
-    return ''.join(seq_map[seq[i]] for i in xrange(len(seq)))
+def _2str(unit):
+    """ Convert unit list to str """
+    if not isinstance(unit,list):
+        raise TypeError('Input required as <list>!')
+    return ' '.join([str(u) for u in unit])
+
+def _output(unit,unit_dict):
+    """ Converts unit list to usable form """
+    if not isinstance(unit,list):
+        raise TypeError('Input required as <list>!')
+    # convert unit, and pass str out
+    unit_converts = [(unit[0]*unit_dict[unit[1]]/v,k) for k,v in unit_dict.items()]
+    unit_converts = [[k,v] for k,v in unit_converts if k >= 0.1 and k < 100.0]
+
+    return _2str(unit_converts[0])
 
 #--------------------------------------#
 
-def rcomp(seq):
+def _standardize_units(unit,*args):
+    """ standardizes all units to the first """
 
-    """ Complement input sequence """
+    # 
+    unit_dict = _unit_dict(unit)
 
-    assert isinstance(seq,str),"submitted sequence is not str"
-    seq_map = _seq_map()
-    return ''.join(seq_map[seq[len(seq) - i - 1]] for i in xrange(len(seq)))
+
+
+    return unit,args 
 
 #--------------------------------------#
-#           Internal Methods           #
-#--------------------------------------#
 
-def _seq_map():
-
-    # TODO: expand mapping to include degenerative codons
-
-    return {'A':'T','T':'A',
-            'C':'G','G':'C',
-            'N':'N',' ':' ',
-            '|':'|','-':'-'}
+def _check_unit_compatibility(*args):
+    """ Checks that extracted units from suffixes are all equal """
+    return _check_equal_list((_get_unit(arg) for arg in args))
 
 #--------------------------------------#
 
@@ -111,8 +142,9 @@ def _get_unit(suffix):
         raise KeyError('Unit suffix not recognized <{}>!'.format(suffix))
 
     # pick unit that matches
-    matched_unit = [unit for unit,match in zip(known_units,matches) if match][0]
+    return [unit for unit,match in zip(known_units,matches) if match][0]
 
+#--------------------------------------#
 
 def _unit_dict(suffix):
 
@@ -124,79 +156,24 @@ def _unit_dict(suffix):
             'n' + matched_unit : 1e-9,
             'u' + matched_unit : 1e-6,
             'm' + matched_unit : 1e-3,
-            ''  + matched_unit :  1e0
+            ''  + matched_unit :  1e0,
             'k'  + matched_unit :  1e3
            }
 
-        
-
-def _volume_units():
-
-    """ Volume units dictionary """
-
-    return {
-            'nL':1e-9,
-            'uL':1e-6,
-            'mL':1e-3,
-            'L' : 1e0
-           }
-
-def _mass_units():
-
-    """ Mass units dictionary """
-
-    return {
-            'ng': 1e-9,
-            'ug': 1e-6,
-            'mg': 1e-3,
-            'g' :  1e0,
-            'kg':  1e3
-           }
-
-def _molar_units():
-    return {
-            'nM':1e-9,
-            'uM':1e-6,
-            'mM':1e-3,
-            '<' : 1e0
-           }
-
+#--------------------------------------#
+#          Factory Methods             #
 #--------------------------------------#
 
-def _normalize_dict(my_dict):
-    new_dict = {}
 
-    # iterate through dictionary items
-    for k,v in my_dict.items():
-
-        # check if float
-        try:
-            new_dict[str(k).lower()] = float(v)
-
-            continue
-        except ValueError:
-            pass
-
-        # check if list of strs 
-        if v.strip(' ').startswith('[') and v.strip(' ').endswith(']'):
-            try:
-                new_dict[str(k).lower()] = [float(i) for i in v[1:-1].split(',')]
-                continue
-            except ValueError:
-                new_dict[str(k).lower()] = [str(i).strip(' ') for i in v[1:-1].split(',')]
-                continue
-        else:
-            new_dict[str(k).lower()] = str(v).strip(' ')
-
-    # returns new dictionary
-    return new_dict
+def _check_equal_list(iterator):
+    """ Check that all elements in list are equal """
+    return len(set(iterator)) <= 1
 
 #--------------------------------------#
 #               Testing                #
 #--------------------------------------#
 
 if __name__ == "__main__":
-    seq = 'AAATTTCCCGGGATCG'
-    print seq
-    print comp(seq)
-    print rcomp(seq)
+    print subtract_units('1 mL','10 uL')
+    print add_units('1 mL','10 uL','100 uL','20 mL')
+

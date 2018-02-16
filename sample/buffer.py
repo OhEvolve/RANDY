@@ -21,7 +21,6 @@ class Buffer(Matter,Mixture):
     def __init__(self,*args,**kwargs):
         """ Initialization of object """
         self.contents  = []                      # list to fill with matter
-        self.volume = 0.                         # volume of buffer
         self.instructions = ''                   # preparation instructions
         self.reagents = {}                       # reagents log
 
