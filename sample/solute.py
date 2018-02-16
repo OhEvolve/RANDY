@@ -15,9 +15,10 @@ class Solute(Matter):
     def __init__(self,*args,**kwargs):
         """ Initialization of object """
 
-        self.reagent = ''                        # reagent label
+        self.reagent = ''                               # reagent label
         self.molecular_weight = 0.                      # molecular weight
-        self.weight           = 0.                      # cell count
+        self.mass = 0.                                  # mass of solute
+        self.concentration = 0.                         # mass of solute
 
         Matter.__init__(self,*args,**kwargs)            # update with arguments
 

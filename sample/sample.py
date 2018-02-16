@@ -15,17 +15,17 @@ from matter import Matter
 
 """ Main Class  """
 
-class Sample(object):
+class Sample(Matter):
     
     def __init__(self,*args,**kwargs):
         """ Initialization of object """
-        self.name      = ''                  # name of sample 
         self.container = ''                  # container for sample
         self.contents  = []                  # list to fill with matter
-        self.cc        = 80                  # center characters (#) [DISPLAY ONLY]
+
+        Matter.__init__(self,*args,**kwargs)     # update with arguments
 
         # list of features to print out on call
-        self.features = ['name','container']
+        self.features += ['container']
 
         self.update(*args,**kwargs) # update with arguments
 
@@ -55,10 +55,9 @@ class Sample(object):
 
     def __str__(self):
         """ Return string with description """
-        description  = ['-- {} object --'.format(type(self).__name__)]
-        description += ['{}: {}'.format(f.capitalize(),getattr(self,f))
-                                           for f in self.features]
-        description += ['\nContents:']
+        base_str = super(Sample, self).__str__() # get the base string from Matter subclass
+
+        description  = ['','Contents:'.center(self.cc)]
         description += [self.cc*'-']
 
         # list contents
@@ -66,28 +65,13 @@ class Sample(object):
             description += ['(empty)']
         else:
             for content in self.contents:
-                description += [str(content)]
-                description += [self.cc*'-']
+                description += [repr(content)]
+                #description += [self.cc*'-']
+
+        description = [d.center(self.cc) for d in description] # center each line
         
         # rejoin list
-        return '\n'.join(description)
-
-    def __repr__(self):
-        """ Representation of object """
-        return '{}({})'.format(type(self).__name__,self.name)
-
-    def update(self,*args,**kwargs):
-        """ Update objects with args/kwargs """
-        for arg in args+(kwargs,): # iterate through arguments
-
-            if not isinstance(arg,dict): # check argument is dictionary
-                raise TypeError('Object passed non-<dict> argument')
-
-            for key,value in arg.items(): # iterate through dictionary items
-
-                if not hasattr(self,key): # ch
-                    raise AttributeError('Object missing attribute ({})'.format(key)) 
-                setattr(self,key,value)
+        return base_str + '\n' + '\n'.join(description)
 
 #--------------------------------------#
 

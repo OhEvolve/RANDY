@@ -16,6 +16,7 @@ from sample.sequence import Sequence
 from sample.cell import Cell
 from sample.solute import Solute
 from sample.solution import Solution
+from sample.buffer import Buffer 
 
 """ Main Method """
 
@@ -47,7 +48,7 @@ class Database(object):
         
     
     def load(self,name,dbname=None,*args,**kwargs):
-        
+
         """ Searches for data """
         if dbname == None:
             dbname = self.local_database_names 
@@ -78,15 +79,28 @@ class Database(object):
                 return Solution(value,*args,**kwargs)
             if key == 'solutes':
                 return Solute(value,*args,**kwargs)
+            if key == 'buffers':
+                return Buffer(
+                        value, 
+                        *args,
+                        contents=[self.load(d['name'],None,d) for d in value['reagents']],
+                        **kwargs)
             # TODO: add buffer and element support
 
-    def sync_local(self,names = None):
+    def sync_local(self,names = None,overwrite = False):
 
         """ Sync local database to cloud database """ 
+
+        if overwrite == True:
+            if not self.silent: print 'Overwriting local database...'
+            for key in self.db.keys():
+                if not self.silent: print 'Deleting {} entries in {}'.format(
+                        len(self.db[key]),key)
+                self.db[key] = {}
             
-        #
+        # 
         if isinstance(names,str): 
-            self.db[name] = _load_db(names) 
+            names = [names]
         if names == None:
             names = self.local_database_names
 
@@ -105,6 +119,19 @@ class Database(object):
             # iterate through available lines
             for row_dict in all_data:
                 
+                # makes modifications to dictionary based on which database
+                # current: only buffers needs element changes 
+                row_dict = _modify_dict(row_dict,name) 
+                
+
+                # treatment of rows without row names
+                if not 'name' in row_dict: # if missing a name (i.e. blank line)
+                    # buffers could have additional lines tho... join with previous entry
+                    if name == 'buffers' and row_dict['reagents']:
+                        self.db[name][last_row_name]['reagents'] += row_dict['reagents']
+                    continue  # skip empty entries otherwise
+                    
+
                 try: # first try to access value
                     if self.db[name][row_dict['name']] == row_dict:
                         continue
@@ -116,15 +143,15 @@ class Database(object):
                     self.db[name][row_dict['name']] = row_dict
                     add_count += 1 
 
+                last_row_name = row_dict['name'] # store last name, if its multiline entry 
+
             # dump resulting file
             pickle.dump(self.db[name],open('./database/{}.p'.format(name),'wb'))
             
             if not self.silent:
                 statement = [
-                        "Database - {} sync'ed:".format(name),
-                        " > {} entries updated".format(update_count),
-                        " > {} entries added".format(add_count),
-                        " > {} entries total".format(len(self.db[name]))
+                        "Database - {} sync'ed ({} updated, {} added, {} total)".format(
+                            name,update_count,add_count,len(self.db[name]))
                         ]
                 print "\n".join(statement)
 
@@ -146,11 +173,41 @@ def _load_db(target):
 
     return db
 
+def _list_check(maybe_str):
+    """ Turns argument into list/tuple"""
+    if not isinstance(type(maybe_str),(list,tuple)):
+        return [maybe_str]
+    return maybe_str
 
+def _clean_dict(my_dict):
+    """ Remove empty entries from dictionary """
+    return dict((k, v) for k, v in my_dict.iteritems() if v)
 
+def _delete_keys(my_dict,keys):
+    """ Delete keys safely from dictionary """
+    for key in keys:
+        try:
+            del my_dict[key]
+        except:
+            continue
 
+def _modify_dict(my_dict,name):
+    my_dict = _clean_dict(my_dict)
+    if name == 'buffers':
+        # list of keys
+        special_keys = ['volume','mass','concentration']
 
+        # summarize variables here 
+        if 'reagents' in my_dict:
+            # create dictionary with key values, rename reagents
 
+            my_dict['reagents'] = [dict((('name',my_dict['reagents']),) + 
+                tuple((k,v) for k,v in my_dict.items() if k in special_keys))]
+
+        # remove these lingering keys (makes things cleaner)
+        _delete_keys(my_dict,special_keys) 
+
+    return my_dict
 
 
 

@@ -16,11 +16,14 @@ class Solution(Matter):
         """ Initialization of object """
 
         self.reagent = ''                        # reagent label
-        self.volume = (0.,'mL')                  # volume of reagent
+        self.volume = '0 mL'                     # volume of reagent
 
         Matter.__init__(self,*args,**kwargs)     # update with arguments
 
-        self.features += ['reagent','volume']     # add printed attributes
+        self.features += ['reagent','volume']    # add printed attributes
+
+    def remove(self):
+        pass
 
 """ Unit tests """
 

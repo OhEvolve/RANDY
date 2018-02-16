@@ -33,12 +33,12 @@ class Sequence(Matter):
         
         # add a sequence object with a ruler to measure
         ruler = ''.join(['{: <10}'.format(i) for i in xrange(1,len(self.sequence)+1,10)])
-        description  = ['\nSequence:'] 
+        description  = ['','Sequence:'.center(self.cc)] 
         description += ['\n'.join([ruler[i:i+self.cc],self.sequence[i:i+self.cc],''])
                 for i in xrange(0,len(self.sequence),self.cc)]
 
         # returns joined object
-        return base_str + '\n'.join(description)
+        return base_str + '\n' + '\n'.join(description)
 
 
 """ Unit tests """

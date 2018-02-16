@@ -20,29 +20,45 @@ from database.database import Database
 
 def main():
 
-    '''
-    sequence = Sequence(sequence="ATCTAG")
-    cell = Cell(species="E.Coli")
-    solute = Solute(weight=(100,'g'))
-    solution = Solution(volume=(10,"mL"))
+    '''#
+    sequence = Sequence(name='Plasmid1',sequence="ATCTAG")
+    cell     = Cell(name='DH5a',species="E.Coli")
+    solute   = Solute(name='Tris',weight=(100,'g'))
+    solution = Solution(name='dH2O',volume=(10,"mL"))
     
-    sample = Sample(container='10mL tube')
+    buff     = Buffer(
+                    name='Buffer EB',
+                    volume=(10,"mL"),
+                    contents=[solute,solution]
+                    )
+
+    sample  = Sample(container='10mL tube')
 
     sample += sequence
     sample += cell 
     sample += solute 
     sample += solution 
 
-    print sample
-    '''
-
+    print 'Cell:\n',cell
+    print 'Sequence:\n',sequence
+    print 'Cell+sequence:\n',cell+sequence
+    print 'Buffer:\n',buff
+    #'''#
+    
+    #'''#
     db = Database()
-    db.sync_local()
+    db.sync_local(overwrite=True)
 
     solution = db.load('dH2O',volume = (50,'uL'))
     solute   = db.load('Tris-Cl')
     cells    = db.load('DH5a')
+
+    Buffer(contents=[solute,cells])
     
+
+    buff  = db.load('Buffer EB')
+
+    #'''#
 
 
     return 

@@ -18,7 +18,7 @@ class Matter(object):
         self.name  = ''                  # name of matter
         self.id    = id(self)            # ID of matter
         self.owner = ''                  # owner of sample 
-        self.cc    = 80                  # center characters (#) [DISPLAY ONLY]
+        self.cc    = 40                  # center characters (#) [DISPLAY ONLY]
 
         # list of features to print out on call
         self.features = ['name','owner']
@@ -26,6 +26,21 @@ class Matter(object):
         self.update(*args,**kwargs) # update with arguments
 
     def __add__(self,other):
+        """ Add matter to matter, returns sample object """
+        # check if you are adding two things that are matter
+        if not issubclass(type(other),Matter):
+            raise TypeError('Sample can only add Matter objects')
+
+        result = sample.Sample(contents=[self,other])
+        return result 
+
+    def __iadd__(self,other):
+        """ Add matter to self, returns sample object """
+
+        # check if you are adding two things that are matter
+        if not issubclass(type(other),Matter):
+            raise TypeError('Sample can only add Matter objects')
+
         result = sample.Sample(contents=[self,other])
         return result 
 
@@ -34,7 +49,7 @@ class Matter(object):
         description  = ['-- {} object --'.format(type(self).__name__)]
         description += ['{}: {}'.format(f.capitalize(),getattr(self,f))
                                            for f in self.features]
-        return '\n'.join(description)
+        return '\n'.join([d.center(self.cc) for d in description])
 
     def __repr__(self):
         """ Representation of object """
