@@ -10,19 +10,21 @@
 
 # homegrown libraries
 from matter import Matter
+from mixture import Mixture 
 
 #--------------------------------------#
 
 """ Main Class  """
 
-class Sample(Matter):
+class Sample(Matter,Mixture):
     
     def __init__(self,*args,**kwargs):
         """ Initialization of object """
         self.container = ''                  # container for sample
         self.contents  = []                  # list to fill with matter
 
-        Matter.__init__(self,*args,**kwargs)     # update with arguments
+        Matter.__init__(self)                    # update with arguments
+        Mixture.__init__(self)                   # update with arguments
 
         # list of features to print out on call
         self.features += ['container']
@@ -72,6 +74,7 @@ class Sample(Matter):
         
         # rejoin list
         return base_str + '\n' + '\n'.join(description)
+    
 
 #--------------------------------------#
 

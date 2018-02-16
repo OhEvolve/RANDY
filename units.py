@@ -1,15 +1,12 @@
+# units.py
 
 """
-
-Common internal methods used throughout protocols
-
+Module to take care of everything related to units
 """
 
 # standard libraries
 
 # nonstandard libraries
-#import openpyxl
-#from openpyxl.utils import get_column_letter
 
 # homegrown libraries
 

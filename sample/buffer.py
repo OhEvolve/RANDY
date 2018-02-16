@@ -10,12 +10,13 @@
 
 # homegrown libraries
 from matter import Matter
+from mixture import Mixture 
 
 #--------------------------------------#
 
 """ Main Class  """
 
-class Buffer(Matter):
+class Buffer(Matter,Mixture):
     
     def __init__(self,*args,**kwargs):
         """ Initialization of object """
@@ -24,7 +25,8 @@ class Buffer(Matter):
         self.instructions = ''                   # preparation instructions
         self.reagents = {}                       # reagents log
 
-        Matter.__init__(self,*args,**kwargs)     # update with arguments
+        Matter.__init__(self)                    # update with arguments
+        Mixture.__init__(self)                   # update with arguments
 
         # list of features to print out on call
         self.features += ['instructions','reagents']
