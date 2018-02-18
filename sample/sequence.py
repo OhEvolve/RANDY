@@ -4,6 +4,8 @@
 
 # standard libraries
 # nonstandard libraries
+from Bio.SeqUtils import molecular_weight
+
 # homegrown libraries
 from matter import Matter 
 from solute import Solute 
@@ -13,24 +15,23 @@ from solute import Solute
 
 """ Main Class  """
 
-class Sequence(Matter):
+class Sequence(Solute):
     
     def __init__(self,*args,**kwargs):
         """ Initialization of object """
 
         self.sequence      = ''                        # species of population
         self.codon_set     = 'standard'                # codon set (only supported: standard)
-        self.elements      = {}                        # cell count
-        self.weight        = '0 ug'                    # cell count
+        self.elements      = {}                        # elements to display in your sequence
         self.material      = 'dsDNA'                   # dsDNA,ssDNA,dsRNA,ssRNA
-        self.shape         = 'linear'                  # circular
+        self.shape         = 'linear'                  # linear,circular 
 
         Matter.__init__(self)           # add class features
         Solute.__init__(self)           # add class features
 
         self.update(*args,**kwargs)     # update object attributes
 
-        self.features += ['weight','material']     # add printed attributes
+        self.features += ['material']     # add printed attributes
 
     def __str__(self):
         """ Return string with description """
@@ -49,20 +50,36 @@ class Sequence(Matter):
     def molecular_weight(self):
         """ Calculate molecular weight based on stuff """
 
-        return self._molecular_weight
+        if len(self.sequence) == 0: 
+            self.molecular_weight = None
+
+        # get the material type
+        if 'DNA' in self.material: seq_type = 'DNA'
+        elif 'RNA' in self.material: seq_type = 'RNA'
+        elif 'protein' in self.material: seq_type = 'protein'
+
+        # get double stranded state
+        if 'ds' in self.material: double_stranded = True 
+        else: double_stranded = False
+
+        # get circular state
+        circular = (self.shape == 'circular')
+    
+        # find MW value
+        mw = molecular_weight(
+                 self.sequence,
+                 seq_type=seq_type,
+                 double_stranded=double_stranded,
+                 circular=circular)
+
+        # return value with unit
+        return '{} g/mol'.format(mw)
+                
 
     @molecular_weight.setter
     def molecular_weight(self,value):
         """ Block molecular weight changes """
-
-        # if the sequence is empty, return nothing to prevent property calls
-        if len(self.sequence) == 0: 
-            return None
-
-        # else
-        
-
-
+        pass 
 
 """ Unit tests """
 

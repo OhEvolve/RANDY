@@ -6,7 +6,7 @@
 # nonstandard libraries
 # homegrown libraries
 from matter import Matter 
-from units import mass2mol,mol2mass
+from units import mass2mol,mol2mass,_2str,_2list
 
 """ Main Class  """
 
@@ -17,17 +17,19 @@ class Solute(Matter):
 
         self._molecular_weight = None                    # molecular weight
 
-        self._mass          = 0.                         # mass of solute
-        self._moles         = 0.                         # mols of solute
+        self._mass          = '0 g'                      # mass of solute
+        self._moles         = '0 mol'                    # mols of solute
 
-        self._concentration = 0.                         # mass/volume of solute
-        self._molarity      = 0.                         # mols/volume of solute
+        self._concentration = 'unknown'                  # mass/volume of solute
+        self._molarity      = 'unknown'                  # mols/volume of solute
 
         Matter.__init__(self)                            # update with arguments
 
         self.update(*args,**kwargs)                      # update object attributes
 
-        self.features += ['molecular_weight','mass','moles']  # add printed attributes
+        self.features += ['molecular_weight','mass','moles','concentration','molarity']  # add printed attributes
+
+    # ---------- #
 
     @property
     def mass(self):
@@ -43,6 +45,8 @@ class Solute(Matter):
         if self.molecular_weight:
             self._moles = mass2mol(self._mass,self.molecular_weight)
 
+    # ---------- #
+
     @property
     def moles(self):
         """ Number of Moles Property """
@@ -57,15 +61,34 @@ class Solute(Matter):
         if self.molecular_weight:
             self._mass = mol2mass(self._moles,self.molecular_weight)
 
+    # ---------- #
+
     @property
-    def _molecular_weight(self):
+    def concentration(self):
+        """ Number of Moles Property """
+        return self._concentration
+
+    # ---------- #
+
+    @property
+    def molarity(self):
+        """ Number of Moles Property """
+        return self._molarity
+
+    # ---------- #
+
+    @property
+    def molecular_weight(self):
         """ Number of Moles Property """
         return self._molecular_weight
 
-    @moles.setter
-    def moles(self,value):
+    @molecular_weight.setter
+    def molecular_weight(self,value):
         """ Mass Setter Property """
         self._molecular_weight = value
+
+    # ---------- #
+
 
 """ Unit tests """
 

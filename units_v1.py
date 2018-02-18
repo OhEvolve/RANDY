@@ -19,36 +19,58 @@ def add_units(*units):
     # check that units are compatible between unit/unit2
     if len(units) == 0: 
         return None
-    _check_unit_compatibility(*units)
+    unit_type = _check_unit_compatibility(*units)
 
     # get unit dictionary
-    unit_dict = _unit_dict(units[0])
-    units = tuple(_2list(u) for u in units)
+    unit_dict = _unit_dict(unit_type)
+    unit_vals = tuple(_standard(u,unit_dict) for u in units)
 
     # subtract using unit conversion
-    new_unit = units[0]
-    new_unit[0] += sum([u[0]*unit_dict[u[1]]/unit_dict[new_unit[1]]
-        for u in units[1:]])
-
+    unit_val = sum(unit_vals)
+    
     # package and return string unit
-    return _output(new_unit,unit_dict)
+    return _output([unit_val,unit_type],unit_dict)
 
 #--------------------------------------#
 
 def subtract_units(unit1,unit2):
     """ Subtract two units from each other """
     # check that units are compatible between unit/unit2
-    _check_unit_compatibility(unit1,unit2)
+    unit_type = _check_unit_compatibility(unit1,unit2)
 
     # get unit dictionary
-    unit_dict = _unit_dict(unit1)
-    unit1,unit2 = _2list(unit1),_2list(unit2)
+    unit_dict = _unit_dict(unit_type)
+    unit1_val = _standard(unit1,unit_dict)
+    unit2_val = _standard(unit2,unit_dict)
 
     # subtract using unit conversion
-    unit3 = [unit1[0] - unit2[0]*unit_dict[unit2[1]]/unit_dict[unit1[1]],unit1[1]]
+    unit_val = unit1_val - unit2_val
 
     # package and return string unit
-    return _output(unit3,unit_dict)
+    return _output([unit_val,unit_type],unit_dict)
+
+#--------------------------------------#
+
+def divide_units(unit1,unit2):
+    """ Subtract two units from each other """
+    # check that units are compatible between unit/unit2
+    unit_type = _check_unit_compatibility(unit1,unit2)
+
+    # get unit dictionary
+    unit_dict = _unit_dict(unit_type)
+    unit1_val = _standard(unit1,unit_dict)
+    unit2_val = _standard(unit2,unit_dict)
+
+    # subtract using unit conversion
+    return unit1_val/unit2_val 
+
+def scale_unit(unit,scalar):
+    """ Scale a unit by a scalar """
+    # check that units are compatible between unit/unit2
+    unit = _2list(unit)
+
+    # subtract using unit conversion
+    return _2str([float(scalar)*unit[0],unit[1]])
 
 #--------------------------------------#
 
@@ -98,6 +120,11 @@ def mass2mol(mass,mw):
 # TODO: consider faster alternatives (no indexing)
 #--------------------------------------#
 
+def _standard(unit_str,unit_dict):
+    """ Input str,dict, output float corresponding to unittype """
+    unit = _2list(unit_str)
+    return unit[0]*unit_dict[unit[1]]
+
 def _2list(unit):
     """ Convert unit str to list """
     if not isinstance(unit,str):
@@ -128,7 +155,14 @@ def _output(unit,unit_dict):
 
 def _check_unit_compatibility(*args):
     """ Checks that extracted units from suffixes are all equal """
+    if not _same_units(*args):
+        raise TypeError('Units not equivalent for operation!')
+    else:
+        return _get_unit(args[0])
+
+def _same_units(*args):
     return _check_equal_list((_get_unit(arg) for arg in args))
+
 
 #--------------------------------------#
 
@@ -136,11 +170,12 @@ def _get_unit(unit):
 
     """ Get unit label from suffix """
 
-    if isinstance(type(unit),list): # if unit is list
-        unit = _2str(unit) # convert to string
+    if isinstance(type(unit),str): # if unit is str 
+        unit = _2list(unit) # convert to string
 
     # get array of matches to known units
     known_units = ['g','M','mol','L','Da','g/mol']
+
     # NOTE: This is a sortof hacky way to make sure complex units are assigned first
     # i.e. g/mol is correctly assigned as g/mol, not mol (since both endwith X)
     known_units.sort(key = len,reverse=True) 
@@ -187,8 +222,9 @@ def _check_equal_list(iterator):
 
 if __name__ == "__main__":
 
-    print subtract_units('1 mL','10 uL')
     print add_units('1 mL','10 uL','100 uL','20 mL')
+    print subtract_units('1 mL','10 uL')
+    print divide_units('1 mL','15 uL')
 
     mw = '13 Da'
     mass = '1 ug'

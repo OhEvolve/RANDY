@@ -25,11 +25,17 @@ def main(mode = 0):
 
     if mode == 0:
         """ CURRENT FOCUS """
-        db = Database()
-        solute   = db.load('Tris-Cl')
-        print solute 
-        solute.mass = '100 g'
-        print solute
+        settings = {
+                'name':'sample001',
+                'owner':'PVH',
+                'material':'dsDNA',
+                'sequence':'ATCTAGATAGC'
+                }
+
+    sample = Sequence(settings)
+    print sample
+    sample.moles = '1 mmol'
+    print sample
 
 
     if mode == 1:
