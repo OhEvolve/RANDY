@@ -3,6 +3,10 @@
 Testing Grounds
 """
 
+# standard libraries
+# nonstandard libraries
+# homegrown libraries
+
 global _known_units
 
 # NOTE: This is a sortof hacky way to make sure complex units are assigned first
@@ -15,8 +19,7 @@ class Unit(object):
     def __init__(self,s):
 
         # make numerator/denominator dictionary
-        self.num = dict([(unit,0) for unit in _known_units])
-        self.den = dict([(unit,0) for unit in _known_units])
+        self.units = dict([(unit,0) for unit in _known_units])
 
         s = s.split(' ') # split string
         self.value = float(s[0])
@@ -25,13 +28,11 @@ class Unit(object):
         if len(s) == 1: return None
             
         # start analysis on units 
-        if '/' in s[1]:
-            num,den = s[1].split('/')
-        else:
-            num,den = s[1],''
+        if '/' in s[1]: num,den = s[1].split('/')
+        else:           num,den = s[1],''
 
         # assign units to attibutes
-        for v,sv in zip([num,den],[self.num,self.den]):
+        for sgn,v in zip([1,-1],[num,den]):
             for m in v.split('*'):
                 if '^' in m:
                     m,degree = m.split('^')
@@ -41,16 +42,16 @@ class Unit(object):
                 if m == '': continue
 
                 matched_unit,modifier = _get_unit(m)
-                sv[matched_unit] += int(degree)
-                self.value *= modifier**int(degree)
+                self.units[matched_unit] += sgn*int(degree)
+                self.value *= modifier**(sgn*int(degree))
 
     def __str__(self):
         value_output = str(self.value)
 
         num_output = ['{}'.format(u) if d == 1 else '{}^{}'.format(u,d) if d > 1 else ''
-                for u,d in self.num.items()]
-        den_output = ['{}'.format(u) if d == 1 else '{}^{}'.format(u,d) if d > 1 else ''
-                for u,d in self.den.items()]
+                for u,d in self.units.items()]
+        den_output = ['{}'.format(u) if d == -1 else '{}^{}'.format(u,d) if d < -1 else ''
+                for u,d in self.units.items()]
         num_output = '*'.join([n for n in num_output if n != ''])
         den_output = '*'.join([n for n in den_output if n != ''])
 
@@ -68,29 +69,66 @@ class Unit(object):
 
     # unit
     def __add__(self,other):
-        if 
+
+        """ Add two units together, returns unit """
+
+        if _standard(self.units) != _standard(other.units):
+            raise TypeError('Units not equal between added objects!')
+       
+        self.value += other.value
+
+        return self
 
     def __sub__(self,other):
-        pass
+
+        """ Subtract two units together, returns unit """
+
+        if _standard(self.units) != _standard(other.units):
+            raise TypeError('Units not equal between added objects!')
+
+        self.value -= other.value
+
+        return self
 
     def __mul__(self,other):
-        pass
+
+        """ Multiply two units together, returns unit """
+
+        self.value *= other.value
+        self.units = _merge_dicts(self.units,other.units,1)
+
+        return self
 
     def __truediv__(self,other):
-        pass
 
+        """ Divide two units together, returns unit """
+
+        self.value /= other.value
+        self.units = _merge_dicts(self.units,other.units,-1)
+
+        return self
 
 def _standard(my_dict):
 
     """ Returns a standardized form of units """
+
     conversion = {
-            'Da':'1 g/mol',
-            'M':'1 mol/L'
+            'Da':(('g',1),('mol',-1)),
+            'M':(('mol',1),('L',-1))
             }
 
+    for k,v in conversion.items():
+        if my_dict[k] != 0:
+            for unit,degree in v:
+                my_dict[unit] += my_dict[k]*degree
+            my_dict[k] = 0
+
+    return my_dict
+
+def _
 
 def _resolve(my_dict):
-
+    pass
 
 def _get_unit(my_str):
 
@@ -125,8 +163,15 @@ def _unit_dict(unit):
            }
 
 
+def _merge_dicts(d1,d2,scalar=1):
+    for k,v in d2.items():
+        d1[k] += scalar*v
+    return d1
+
 print Unit('5.0')
-print Unit('5.0 kg/m')
+print Unit('5.0 kg/m') * Unit('3')
+print Unit('5.0 Da') + Unit('0.05 kg/mol')
+print Unit('5.0 Da') - Unit('0.05 kg/mol')
 print Unit('3 uL')
 print Unit('5 g/mL^3')
 
