@@ -2,15 +2,11 @@
 S'Tris-Cl'
 p1
 (dp2
-S'reagent'
+S'name'
 p3
-S'Tris-Cl'
-p4
-sS'name'
-p5
 g1
 sS'molecular_weight'
-p6
+p4
 S'121.14 g/mol'
-p7
+p5
 ss.

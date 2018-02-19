@@ -80,12 +80,11 @@ class Database(object):
             if key == 'solutes':
                 return Solute(value,*args,**kwargs)
             if key == 'buffers':
-                return Buffer(
+                buff = Buffer(
                         value, 
-                        *args,
-                        contents=[self.load(d['name'],None,d) for d in value['reagents']],
-                        **kwargs)
-            # TODO: add buffer and element support
+                        contents=[self.load(d['name'],None,d) for d in value['reagents']])
+                buff.update(*args,**kwargs)
+                return buff
 
     def sync_local(self,names = None,overwrite = False):
 

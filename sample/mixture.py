@@ -6,7 +6,7 @@
 # nonstandard libraries
 # homegrown libraries
 from solute import Solute
-from units import add_units,subtract_units,divide_units,scale_unit
+from units import Unit
 
 """ Main Class  """
 
@@ -34,20 +34,42 @@ class Mixture(object):
                     if hasattr(content,'volume')]
 
         # return summed components
-        return add_units(*volumes)
+        self._volume = sum(volumes)
+        return self._volume
 
     @volume.setter
     def volume(self,new_volume):
         """ Setting volume changes contents! """
         # get scalar to change absolute values of contents
-        scalar = divide_units(new_volume,self.volume)
+        if not isinstance(new_volume,Unit):
+            new_volume = Unit(new_volume)
+        
+        # find scalar to modify contents
+        scalar = new_volume/self.volume
+
+        # check to see if division worked correctly
+        if not scalar.is_unitless():
+            raise TypeError('New volume does not have compatible units!')
 
         # iterate through contents and modify
         for content in self.contents:
             if hasattr(content,'volume'):
-                content.volume = scale_unit(content.volume,scalar)
+                content.volume = scalar*content._volume
             elif hasattr(content,'mass'):
-                content.mass = scale_unit(content.mass,scalar)
+                content.mass = scalar*content._mass
+                content.total_volume = new_volume
+            elif hasattr(content,'count'):
+                content.count = scalar*content._count
             else:
                 raise AttributeError('Object missing mass/volume attributes!')
+
+    def display_contents(self):
+        """ Print contents of mixture """
+        for i,content in enumerate(self.contents):
+            print 'Component {}:\n{}'.format(i+1,content)
+
+
+
+
+
 

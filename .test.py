@@ -1,9 +1,20 @@
 
+
 """
 Testing Grounds
 """
 
+class Hello:
 
+    def __init__(self,name):
+        self.name = name 
+
+    def __repr__(self):
+        return self.name 
+
+
+print Hello('hello')
+print Hello(None)
 '''#
 
 class Test(object):

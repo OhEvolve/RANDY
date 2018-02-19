@@ -32,6 +32,7 @@ class Matter(object):
             raise TypeError('Sample can only add Matter objects')
 
         result = sample.Sample(contents=[self,other])
+
         return result 
 
     def __iadd__(self,other):

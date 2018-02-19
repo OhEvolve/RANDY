@@ -28,6 +28,8 @@ class Sample(Matter,Mixture):
 
         self.update(*args,**kwargs)     # update object attributes
 
+        self.volume = self.volume
+
         # list of features to print out on call
         self.features += ['container']
 
@@ -77,11 +79,6 @@ class Sample(Matter,Mixture):
     
 
 #--------------------------------------#
-
-""" Main Class  """
-
-def _subtract_volume(sample,volume):
-    pass 
 
 #--------------------------------------#
 

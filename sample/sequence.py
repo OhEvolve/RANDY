@@ -9,6 +9,7 @@ from Bio.SeqUtils import molecular_weight
 # homegrown libraries
 from matter import Matter 
 from solute import Solute 
+from units import Unit
 
 # TODO:
 # codon set support
@@ -31,7 +32,7 @@ class Sequence(Solute):
 
         self.update(*args,**kwargs)     # update object attributes
 
-        self.features += ['material']     # add printed attributes
+        self.features += ['material','total_volume']     # add printed attributes
 
     def __str__(self):
         """ Return string with description """
@@ -51,7 +52,7 @@ class Sequence(Solute):
         """ Calculate molecular weight based on stuff """
 
         if len(self.sequence) == 0: 
-            self.molecular_weight = None
+            return 0 
 
         # get the material type
         if 'DNA' in self.material: seq_type = 'DNA'
@@ -72,14 +73,23 @@ class Sequence(Solute):
                  double_stranded=double_stranded,
                  circular=circular)
 
+        # create unit object
+        self._molecular_weight = Unit('{} g/mol'.format(mw))
+
         # return value with unit
-        return '{} g/mol'.format(mw)
+        return self._molecular_weight
                 
 
     @molecular_weight.setter
     def molecular_weight(self,value):
         """ Block molecular weight changes """
         pass 
+
+
+
+
+
+
 
 """ Unit tests """
 
@@ -88,7 +98,7 @@ if __name__ == "__main__":
     settings = {
             'name':'sample001',
             'owner':'PVH',
-            'sequence':'CCCCCCCCCCCCCCCCCCCCCCCCCATATATATATATATAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTGGGGGG'
+            'sequence':'CCCCCCCCCCCCCTAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTGGGGGG'
             }
 
     sample = Sequence(settings)

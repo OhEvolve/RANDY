@@ -25,25 +25,21 @@ def main(mode = 0):
 
     if mode == 0:
         """ CURRENT FOCUS """
-        settings = {
-                'name':'sample001',
-                'owner':'PVH',
-                'material':'dsDNA',
-                'sequence':'ATCTAGATAGC'
-                }
+        
+        db = Database()
 
-    sample = Sequence(settings)
-    print sample
-    sample.moles = '1 mmol'
-    print sample
+        plasmid = Sequence(name='MyPlasmid',mass='1 ug',sequence='ATCGGAGACTAGGCCATAGC',material='dsDNA')
+        buffer1  = db.load('Buffer EB',volume = '50 uL')
+        buffer1.volume = '50 uL'
 
+        print plasmid + buffer1
 
     if mode == 1:
         """ SAMPLE TESTING """
         sequence = Sequence(name='Plasmid1',sequence="ATCTAG")
         cell     = Cell(name='DH5a',species="E.Coli")
-        solute   = Solute(name='Tris',mass =(100,'g'))
-        solution = Solution(name='dH2O',volume=(10,"mL"))
+        solute   = Solute(name='Tris',mass ='100 g')
+        solution = Solution(name='dH2O',volume='10 mL')
 
         sample  = Sample(container='10mL tube')
 
@@ -54,6 +50,10 @@ def main(mode = 0):
 
         print 'Cell+sequence:\n',cell+sequence
         print 'Sample:\n',sample
+
+        sample.volume = '3 mL'
+
+        print 'Sample (rv):\n',sample
     
     if mode == 2:
         """ DATABASE TESTING """

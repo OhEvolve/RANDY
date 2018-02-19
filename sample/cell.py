@@ -6,7 +6,7 @@
 # nonstandard libraries
 # homegrown libraries
 from matter import Matter 
-
+from units import Unit
 
 """ Main Class  """
 
@@ -16,13 +16,27 @@ class Cell(Matter):
         """ Initialization of object """
 
         self.species = ''                        # species of population
-        self.count = 0                           # cell count
+        self.count = 0                         # cell count
 
         Matter.__init__(self)     # update with arguments
 
         self.update(*args,**kwargs)              # update object attributes
 
         self.features += ['species','count']     # add printed attributes
+
+    @property
+    def count(self):
+        """ Number of Moles Property """
+        return self._count
+
+    @count.setter
+    def count(self,value):
+        """ Mass Setter Property """
+        # set moles of object 
+        if not isinstance(value,Unit):  
+            value = Unit(value)
+
+        self._count = value
 
 """ Unit tests """
 

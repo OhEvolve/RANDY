@@ -6,7 +6,7 @@
 # nonstandard libraries
 # homegrown libraries
 from matter import Matter 
-
+from units import Unit
 
 """ Main Class  """
 
@@ -21,8 +21,22 @@ class Solution(Matter):
 
         self.update(*args,**kwargs)              # update object attributes
 
-        self.features += ['reagent','volume']    # add printed attributes
+        self.features += ['volume']    # add printed attributes
 
+    @property
+    def volume(self):
+        """ Volume Property """
+        return self._volume
+
+    @volume.setter
+    def volume(self,value):
+        """ Volume Setter Property """
+        # set volume of object 
+        if not isinstance(value,Unit):  
+            value = Unit(value)
+
+        self._volume = value
+    
 
 """ Unit tests """
 
