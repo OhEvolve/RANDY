@@ -1,15 +1,15 @@
-# pcr.py
+# miniprep.py
 
 """
-Protocol for PCR
+Protocol for Miniprep 
 """
 
 """
 Inputs:
-    sample (material: ssDNA,dsDNA)
+    sample (material: cells)
 
 Outputs:
-    sample (increased ssDNA,dsDNA conc.)
+    sample (material: DNA)
 """
 
 # standard libraries
@@ -17,24 +17,17 @@ Outputs:
 # homegrown libraries
 from base_protocol import BaseProtocol
 
-class PCR(BaseProtocol):
+class Miniprep(BaseProtocol):
 
     def __init__(self):
 
         """ initalize base protocl class """
         
         BaseProtocol.__init__(self)
-        self.reqs = ['sample','primers','polymerase']
+        self.reqs = ['sample']
 
     def io(self):
 
         """ pass input dictionary, return output dictionary """
-        
-        self.is_valid()
 
-    def _check_output(self):
-
-        if any([content in sample.contents]):
         self._check_inputs()
-
-

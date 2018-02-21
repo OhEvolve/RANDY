@@ -16,9 +16,10 @@ class Cell(Matter):
         """ Initialization of object """
 
         self.species = ''                        # species of population
-        self.count = 0                         # cell count
+        self.contents = ['gDNA']                 # contents 
+        self.count = 0                           # cell count
 
-        Matter.__init__(self)     # update with arguments
+        Matter.__init__(self)                    # update with arguments
 
         self.update(*args,**kwargs)              # update object attributes
 
