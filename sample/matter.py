@@ -15,10 +15,11 @@ class Matter(object):
     
     def __init__(self,*args,**kwargs):
         """ Initialization of object """
-        self.name  = ''                  # name of matter
-        self.id    = id(self)            # ID of matter
-        self.owner = ''                  # owner of sample 
-        self.cc    = 40                  # center characters (#) [DISPLAY ONLY]
+        self.name  = ''                             # name of matter
+        self.class_name = self.__class__.__name__   # class name
+        self.id    = id(self)                       # ID of matter
+        self.owner = ''                             # owner of sample 
+        self.cc    = 40                             # center characters (#) [DISPLAY ONLY]
 
         # list of features to print out on call
         self.features = ['name','owner']

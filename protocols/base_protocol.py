@@ -20,8 +20,11 @@ class BaseProtocol(object):
         self.outputs        = {'sample': None}       # output dictionary
 
         # required keys in input dictionary
-        self.input_reqs     = {
-                'sample':{
+        self.input_reqs     = 
+                {
+                'sample':{}
+                }
+
 
         
     # ---------- #
@@ -36,22 +39,62 @@ class BaseProtocol(object):
 
     def is_valid():
         self._check_input_reqs()
-        self._check_intended_output()
 
-    def _check_input(self):
+    def _check_requirements(self):
 
         """ Checks inputs using requirements """
 
-        if not all([input_req in self.inputs for input_req in self.reqs]):
-            raise KeyError('Input dictionary does not contain all necessary keys!') 
+# -------------------- #
+#   Internal Methods   #
+# -------------------- #
 
-    def _check_output(self):
-        
-        if : # include cases for improper usage
-            raise Warning('Inputs missing expected contents, may not result in intended output')
+def _check_attributes(obj_list,attr_dict):
 
-    def _check_contents(self)
+    """ Pass object and dictionary of attributes, recursively checks properties """
+
+    # check whether objects are iterable containers
+    if not isinstance(obj,(tuple,list)):
+        obj_list = [obj_list] 
+
+    # check that passed attribute is type dict
+    if not isinstance(attr_dict,dict):
+        raise TypeError('Passed non-dictionary to attribute check!')
     
+    # iterate through attributes
+    for k,v in attr_dict.items():
+        for obj in obj_list:
+            if hasattr(obj,k):
+                if isinstance(v,(list,tuple)):
+                    pass 
+                else:
+                    if getattr(obj,k) == v
+
+    return True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+    
+
+
+
+
+
+
 
 
 

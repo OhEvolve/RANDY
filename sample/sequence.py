@@ -25,6 +25,7 @@ class Sequence(Solute):
         self.codon_set     = 'standard'                # codon set (only supported: standard)
         self.elements      = {}                        # elements to display in your sequence
         self.material      = 'dsDNA'                   # dsDNA,ssDNA,dsRNA,ssRNA
+        self.form          = 'plasmid'                 # plasmid,genomic
         self.shape         = 'linear'                  # linear,circular 
 
         Matter.__init__(self)           # add class features

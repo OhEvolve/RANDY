@@ -6,6 +6,7 @@
 # nonstandard libraries
 # homegrown libraries
 from matter import Matter 
+from sequence import Sequence 
 from units import Unit
 
 """ Main Class  """
@@ -15,15 +16,15 @@ class Cell(Matter):
     def __init__(self,*args,**kwargs):
         """ Initialization of object """
 
-        self.species = ''                        # species of population
-        self.contents = ['gDNA']                 # contents 
-        self.count = 0                           # cell count
+        self.species = ''                                      # species of population
+        self.count = 0                                         # cell count
+        self.contents = [Sequence(name='gDNA',form='genomic')] # contents of cell
 
-        Matter.__init__(self)                    # update with arguments
+        Matter.__init__(self)                                  # update with arguments
 
-        self.update(*args,**kwargs)              # update object attributes
+        self.update(*args,**kwargs)                            # update object attributes
 
-        self.features += ['species','count']     # add printed attributes
+        self.features += ['species','count']                   # add printed attributes
 
     @property
     def count(self):
@@ -38,6 +39,7 @@ class Cell(Matter):
             value = Unit(value)
 
         self._count = value
+
 
 """ Unit tests """
 
