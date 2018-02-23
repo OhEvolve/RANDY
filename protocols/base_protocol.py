@@ -20,8 +20,7 @@ class BaseProtocol(object):
         self.outputs        = {'sample': None}       # output dictionary
 
         # required keys in input dictionary
-        self.input_reqs     = 
-                {
+        self.requirements = {
                 'sample':{}
                 }
 
@@ -37,12 +36,15 @@ class BaseProtocol(object):
 
     # ---------- #
 
-    def is_valid():
-        self._check_input_reqs()
+    def is_valid(self,input_dict):
 
-    def _check_requirements(self):
+        """ Checks whether input dictionary is valid """
 
-        """ Checks inputs using requirements """
+        # makes sure all requirements are satisfied
+        if not all([_check_attributes(self,self.requirements) for k,v in self.requirements]):
+            raise AttributeError('Missing atleast one required attributes in input!')
+
+        
 
 # -------------------- #
 #   Internal Methods   #
@@ -53,7 +55,7 @@ def _check_attributes(obj_list,attr_dict):
     """ Pass object and dictionary of attributes, recursively checks properties """
 
     # check whether objects are iterable containers
-    if not isinstance(obj,(tuple,list)):
+    if not isinstance(obj_list,(tuple,list)):
         obj_list = [obj_list] 
 
     # check that passed attribute is type dict
@@ -62,17 +64,14 @@ def _check_attributes(obj_list,attr_dict):
     
     # iterate through attributes
     for k,v in attr_dict.items():
-        for obj in obj_list:
-            if hasattr(obj,k):
-                if isinstance(v,(list,tuple)):
-                    pass 
-                else:
-                    if getattr(obj,k) == v
 
+        # check recursively through attributes, checking for compatibility
+        if not any([all([_check_attributes(getattr(obj,k),i) for i in v]) if hasattr(obj,k) and isinstance(v,(list,tuple))
+            else getattr(obj,k) == v if hasattr(obj,k) else False for obj in obj_list]):
+            return False
+
+    # if there are no missing attributes
     return True
-
-
-
 
 
 

@@ -19,12 +19,13 @@ from base_protocol import BaseProtocol
 
 class Miniprep(BaseProtocol):
 
-    def __init__(self):
+    def __init__(self,database):
 
-        """ initalize base protocl class """
+        """ initalize base protocol class """
         
         BaseProtocol.__init__(self)
 
+        self.database = None
         self.requirements = {}
 
         
@@ -37,6 +38,7 @@ class Miniprep(BaseProtocol):
         # ... require cell to contain plasmid 
         cell_req = {
                 'class_name':'Cell',
+                'species':'E. coli',
                 'contents':[plasmid_req]
                 }
 
@@ -51,8 +53,34 @@ class Miniprep(BaseProtocol):
                 }
 
 
-    def io(self):
+    def io(self,input_dict):
 
-        """ pass input dictionary, return output dictionary """
+        """ Pass input dictionary, return output dictionary """
 
-        self._check_inputs()
+        # check whether input requirements are met
+        self.is_valid(input_dict) 
+
+        # pull out cells in sample
+        cells = [content for content in input_dict['sample'].contents 
+                        if content.class_name == 'Cell']
+
+        # pull out plasmids of E. coli cell types
+        plasmids = sum([sum([content for content in cell.content if content.form == 'plasmid']) 
+                               for cell in cells if cell.species == 'E. coli'])
+
+        # add buffer EB
+        output += self.database.load('Buffer EB',volume='50 uL')
+
+        # return final sample
+        return {'sample':output}
+
+
+
+
+
+
+
+
+
+
+

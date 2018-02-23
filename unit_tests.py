@@ -17,6 +17,9 @@ from sample.buffer import Buffer
 # DATABASE MODULE
 from database.database import Database
 
+# PROTOCOL MODULE
+from protocols.miniprep import Miniprep
+
 # UNITS
 #from units import sum_units
 
