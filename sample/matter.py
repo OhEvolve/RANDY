@@ -46,6 +46,15 @@ class Matter(object):
         result = sample.Sample(contents=[self,other])
         return result 
 
+    def __radd__(self, other):
+
+        """ Reverse add, compatibility for sum """
+
+        if other == 0:
+            return self
+        else:
+            return self.__add__(other)
+
     def __str__(self):
         """ Return string with description """
         description  = ['-- {} object --'.format(type(self).__name__)]

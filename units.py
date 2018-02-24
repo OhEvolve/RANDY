@@ -118,6 +118,8 @@ class Unit(object):
 
         return new_unit 
 
+    # ---------------------------------------- #
+
     def __radd__(self, other):
 
         """ Reverse add, compatibility for sum """

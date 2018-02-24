@@ -29,13 +29,25 @@ def main(mode = 0):
     if mode == 0:
         """ CURRENT FOCUS """
         
+        print 'Loading database...'
         db = Database()
 
+        # 
         plasmid = Sequence(name='MyPlasmid',mass='1 ug',sequence='ATCGGAGACTAGGCCATAGC',material='dsDNA')
-        buffer1  = db.load('Buffer EB',volume = '50 uL')
-        buffer1.volume = '50 uL'
+        cell = Cell(name='DH5a',species='E. coli')
+        cell.contents += [plasmid]
 
-        print plasmid + buffer1
+        # create dilution solution
+        mybuffer = db.load('dH2O',volume = '50 uL')
+        mybuffer.volume = '50 uL'
+
+        # build sample
+        sample = cell + mybuffer
+        
+
+        miniprep = Miniprep(db)
+        output = miniprep.io({'sample':sample})
+        print output['sample']
 
     if mode == 1:
         """ SAMPLE TESTING """

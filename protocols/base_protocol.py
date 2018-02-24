@@ -41,7 +41,7 @@ class BaseProtocol(object):
         """ Checks whether input dictionary is valid """
 
         # makes sure all requirements are satisfied
-        if not all([_check_attributes(self,self.requirements) for k,v in self.requirements]):
+        if not all([_check_attributes(input_dict[k],v) for k,v in self.requirements.items()]):
             raise AttributeError('Missing atleast one required attributes in input!')
 
         
@@ -64,7 +64,6 @@ def _check_attributes(obj_list,attr_dict):
     
     # iterate through attributes
     for k,v in attr_dict.items():
-
         # check recursively through attributes, checking for compatibility
         if not any([all([_check_attributes(getattr(obj,k),i) for i in v]) if hasattr(obj,k) and isinstance(v,(list,tuple))
             else getattr(obj,k) == v if hasattr(obj,k) else False for obj in obj_list]):
